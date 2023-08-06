@@ -1,0 +1,16 @@
+App(
+
+  appid="keyhold",
+  apptype=FlipperAppType.EXTERNAL,
+  name="Key Hold",
+  stack_size=2 * 1024,
+  entry_point="keyhold_app",
+  requires=[
+    "gui"
+  ],
+  fap_private_libs=[
+    Lib(
+      name="monocypher",
+    )
+  ]
+)
