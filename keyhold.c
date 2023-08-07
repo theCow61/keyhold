@@ -108,18 +108,27 @@ void (*const keyhold_scene_on_enter_handlers[])(void*) = {
     keyhold_scene_on_enter_mainmenu,
     keyhold_scene_on_enter_namer,
     keyhold_scene_on_enter_loadedidentity,
+    keyhold_scene_on_enter_encryptionscreen,
+    keyhold_scene_on_enter_exportscreen,
+    keyhold_scene_on_enter_config,
 };
 
 bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
     keyhold_scene_on_event_mainmenu,
     keyhold_scene_on_event_namer,
     keyhold_scene_on_event_loadedidentity,
+    keyhold_scene_on_event_encryptionscreen,
+    keyhold_scene_on_event_exportscreen,
+    keyhold_scene_on_event_config,
 };
 
 void (*const keyhold_scene_on_exit_handlers[])(void*) = {
     keyhold_scene_on_exit_mainmenu,
     keyhold_scene_on_exit_namer,
     keyhold_scene_on_exit_loadedidentity,
+    keyhold_scene_on_exit_encryptionscreen,
+    keyhold_scene_on_exit_exportscreen,
+    keyhold_scene_on_exit_config,
 };
 
 static const SceneManagerHandlers keyhold_scene_manager_handlers = {
@@ -165,6 +174,12 @@ static App* app_alloc() {
     app->view_widget = widget_alloc();
     view_dispatcher_add_view(app->vp, KeyholdViewWidget, widget_get_view(app->view_widget));
 
+    app->view_variableitemlist = variable_item_list_alloc();
+    view_dispatcher_add_view(
+        app->vp,
+        KeyholdViewVariableItemList,
+        variable_item_list_get_view(app->view_variableitemlist));
+
     app->storage = furi_record_open(RECORD_STORAGE);
 
     app->loaded_identity = keyer_identity_init(NULL, NULL);
@@ -178,6 +193,8 @@ static void app_free(App* app) {
     view_dispatcher_remove_view(app->vp, KeyholdViewFileBrowser);
     view_dispatcher_remove_view(app->vp, KeyholdViewTextInput);
     view_dispatcher_remove_view(app->vp, KeyholdViewPopup);
+    view_dispatcher_remove_view(app->vp, KeyholdViewWidget);
+    view_dispatcher_remove_view(app->vp, KeyholdViewVariableItemList);
     scene_manager_free(app->scene_manager);
     view_dispatcher_free(app->vp);
     submenu_free(app->view_submenu);
@@ -185,6 +202,7 @@ static void app_free(App* app) {
     text_input_free(app->view_textinput);
     popup_free(app->view_popup);
     widget_free(app->view_widget);
+    variable_item_list_free(app->view_variableitemlist);
     furi_record_close(RECORD_STORAGE);
     keyer_identity_clear(&app->loaded_identity);
     free(app);

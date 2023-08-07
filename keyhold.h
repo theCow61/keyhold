@@ -10,15 +10,22 @@
 #include <gui/modules/text_input.h>
 #include <gui/modules/file_browser.h>
 #include <gui/modules/popup.h>
+#include <gui/modules/variable_item_list.h>
 #include "scenes/main_menu_scene.h"
 #include "scenes/loaded_identity_scene.h"
 #include "scenes/namer_scene.h"
+#include "scenes/encryptionscreen_scene.h"
+#include "scenes/export_screen.h"
+#include "scenes/config_scene.h"
 #include "keyer.h"
 
 typedef enum {
     KeyholdSceneMainMenu,
     KeyholdSceneNamer,
     KeyholdSceneLoadedIdentity,
+    KeyholdSceneEncryptionScreen,
+    KeyholdSceneExportScreen,
+    KeyholdSceneConfig,
     KeyholdSceneCount,
 } KeyholdScene;
 
@@ -27,7 +34,8 @@ typedef enum {
     KeyholdViewFileBrowser,
     KeyholdViewTextInput,
     KeyholdViewPopup,
-    KeyholdViewWidget
+    KeyholdViewWidget,
+    KeyholdViewVariableItemList,
 } KeyholdView;
 
 typedef struct App {
@@ -38,8 +46,11 @@ typedef struct App {
     TextInput* view_textinput;
     Popup* view_popup;
     Widget* view_widget;
+    VariableItemList* view_variableitemlist;
     Storage* storage;
     char all_purpose_string[30];
     // KeyholdScene return_scene_buffer;
     Identity loaded_identity;
+    uint8_t* export_data;
+    // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;
