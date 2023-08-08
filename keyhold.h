@@ -18,6 +18,7 @@
 #include "scenes/export_screen.h"
 #include "scenes/config_scene.h"
 #include "keyer.h"
+#include "saves.h"
 
 typedef enum {
     KeyholdSceneMainMenu,
@@ -52,5 +53,6 @@ typedef struct App {
     // KeyholdScene return_scene_buffer;
     Identity loaded_identity;
     uint8_t* export_data;
+    Saves* saves;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;

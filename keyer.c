@@ -8,8 +8,17 @@
 #include <toolbox/stream/file_stream.h>
 
 Identity keyer_identity_init(uint8_t* sk, uint8_t* pk) {
+    // Identity* identity = malloc(sizeof(Identity));
+    // identity->public_key = pk;
+    // identity->secret_key = sk;
+    // return identity;
     return (Identity){.public_key = pk, .secret_key = sk};
 }
+
+// void keyer_identity_free(Identity* identity) {
+//     keyer_identity_clear(identity);
+//     free(identity);
+// }
 
 void keyer_identity_clear(Identity* idn) {
     if(idn->secret_key != NULL) {
@@ -81,7 +90,8 @@ Identity keyer_generate_keypair() {
     furi_hal_random_fill_buf(sk, 32);
     uint8_t pk[32];
     crypto_x25519_public_key(pk, sk);
-    return (Identity){.public_key = pk, .secret_key = sk};
+    return keyer_identity_init(sk, pk);
+    // return (Identity){.public_key = pk, .secret_key = sk};
 }
 
 // size_t string_to_bbuffer(uint8_t* buffer, char* str) {
@@ -106,7 +116,7 @@ size_t str_len(char* str) {
     return i;
 }
 
-bool keyer_save_identity(Identity* idn, Storage* storage, char* name) {
+bool keyer_save_identity(Identity* idn, Saves* saves, Storage* storage, char* name) {
     if(idn == NULL) {
         return false;
     }
@@ -116,6 +126,10 @@ bool keyer_save_identity(Identity* idn, Storage* storage, char* name) {
     furi_string_cat_str(filepath, name);
     if(!storage_common_exists(storage, furi_string_get_cstr(filepath))) {
         storage_common_mkdir(storage, furi_string_get_cstr(filepath));
+
+        // add to save memory
+
+        saves_add(saves, name);
 
         // add to savee file
 
@@ -167,13 +181,3 @@ bool keyer_save_identity(Identity* idn, Storage* storage, char* name) {
 
     return true;
 }
-
-// void keyhold_load_save(Storage* storage) {
-//     File* file = storage_file_alloc(storage);
-
-//     // storage_file_open(file, SAVED_FILE, FSAM_READ, FSOM_OPEN_ALWAYS);
-//     Stream* file_stream = file_stream_alloc(storage);
-//     FuriString* line;
-//     while(stream_read_line(file_stream, line)) {
-//     }
-// }

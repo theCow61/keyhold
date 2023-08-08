@@ -3,8 +3,8 @@
 
 void keyhold_callback_savename(void* ctx) {
     App* app = ctx;
-    bool result =
-        keyer_save_identity(&app->loaded_identity, app->storage, app->all_purpose_string);
+    bool result = keyer_save_identity(
+        &app->loaded_identity, app->saves, app->storage, app->all_purpose_string);
     scene_manager_handle_custom_event(app->scene_manager, result);
 }
 

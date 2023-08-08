@@ -152,6 +152,11 @@ bool keyhold_back_event_callback(void* ctx) {
 
 static App* app_alloc() {
     App* app = malloc(sizeof(App));
+
+    app->storage = furi_record_open(RECORD_STORAGE);
+
+    app->saves = saves_alloc_load(app->storage);
+
     app->scene_manager = scene_manager_alloc(&keyhold_scene_manager_handlers, app);
     app->vp = view_dispatcher_alloc();
     view_dispatcher_enable_queue(app->vp);
@@ -180,8 +185,6 @@ static App* app_alloc() {
         KeyholdViewVariableItemList,
         variable_item_list_get_view(app->view_variableitemlist));
 
-    app->storage = furi_record_open(RECORD_STORAGE);
-
     app->loaded_identity = keyer_identity_init(NULL, NULL);
 
     return app;
@@ -189,6 +192,7 @@ static App* app_alloc() {
 
 static void app_free(App* app) {
     furi_assert(app);
+    keyer_identity_clear(&app->loaded_identity);
     view_dispatcher_remove_view(app->vp, KeyholdViewSubmenu);
     view_dispatcher_remove_view(app->vp, KeyholdViewFileBrowser);
     view_dispatcher_remove_view(app->vp, KeyholdViewTextInput);
@@ -204,7 +208,7 @@ static void app_free(App* app) {
     widget_free(app->view_widget);
     variable_item_list_free(app->view_variableitemlist);
     furi_record_close(RECORD_STORAGE);
-    keyer_identity_clear(&app->loaded_identity);
+    // saves_free(app->saves);
     free(app);
 }
 
@@ -213,11 +217,14 @@ uint8_t keyhold_app(void* p) {
 
     App* app = app_alloc();
 
+    // keyhold_load_save(app->storage);
+
     Gui* gui = furi_record_open(RECORD_GUI);
     view_dispatcher_attach_to_gui(app->vp, gui, ViewDispatcherTypeFullscreen);
     scene_manager_next_scene(app->scene_manager, KeyholdSceneMainMenu);
     view_dispatcher_run(app->vp);
 
+    // keyhold_unload_save();
     app_free(app);
     return 0;
 }

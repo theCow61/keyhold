@@ -15,8 +15,8 @@ void keyhold_callback_loadedidentity_save(GuiButtonType result, InputType type, 
 
 void keyhold_scene_on_enter_loadedidentity(void* ctx) {
     App* app = ctx;
-    if(app->loaded_identity.secret_key == NULL) { // non-owned.
-    }
+    // if(app->loaded_identity->secret_key == NULL) { // non-owned.
+    // }
 
     widget_reset(app->view_widget);
 

@@ -39,6 +39,7 @@ bool keyhold_scene_on_event_mainmenu(void* ctx, SceneManagerEvent evt) {
     case SceneManagerEventTypeCustom:
         switch(evt.event) {
         case KeyholdMainMenuEventGenerateIdentity:
+            // move generation to KeyholdSceneLoadedIdentity on enter function
             app->loaded_identity = keyer_generate_keypair();
             scene_manager_next_scene(app->scene_manager, KeyholdSceneLoadedIdentity);
             // scene_manager_next_scene(app->scene_manager, KeyholdSceneGenerateKeyPair);
