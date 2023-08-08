@@ -18,6 +18,8 @@ void keyhold_scene_on_enter_loadedidentity(void* ctx) {
     // if(app->loaded_identity->secret_key == NULL) { // non-owned.
     // }
 
+    app->loaded_identity = keyer_generate_keypair();
+
     widget_reset(app->view_widget);
 
     widget_add_button_element(
