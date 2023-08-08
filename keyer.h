@@ -2,6 +2,8 @@
 
 #include <storage/storage.h>
 
+#define SAVED_FILE STORAGE_APP_DATA_PATH_PREFIX "/.saved"
+
 typedef struct Identity {
     uint8_t* secret_key;
     uint8_t* public_key;
