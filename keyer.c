@@ -201,12 +201,11 @@ EncryptorConfig* encryptor_config_alloc() {
     ecf->plain_bytes = NULL;
     ecf->encrypt_bytes = NULL;
     ecf->size = 0;
-    // needs to be changed for file encryption
     return ecf;
 }
 
 void encryptor_config_sync_pbuffer_str(EncryptorConfig* ecf, char* buf) {
-    ecf->plain_bytes = (uint8_t*)strdup(buf);
+    ecf->plain_bytes = (uint8_t*)strdup(buf); // SIGNED TO UNSIGNED CAST
     ecf->size = str_len((char*)ecf->plain_bytes);
 }
 

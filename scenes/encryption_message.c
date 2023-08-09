@@ -2,6 +2,8 @@
 #include "../keyhold.h"
 #include "../lib/monocypher/monocypher.h"
 
+// SIGNED TO UNSIGNED CAST
+
 void keyhold_callback_encrypt(void* ctx) {
     App* app = ctx;
     encryptor_config_sync_pbuffer_str(app->encryptor_config, app->all_purpose_string);
@@ -10,6 +12,8 @@ void keyhold_callback_encrypt(void* ctx) {
     // wipe all_purpose_string
     crypto_wipe(app->all_purpose_string, 255);
     app->all_purpose_string[0] = '\0'; // avoid showing wierd stuff maybe
+
+    scene_manager_handle_custom_event(app->scene_manager, 0);
 }
 
 void keyhold_scene_on_enter_encryptionmessage(void* ctx) {
@@ -28,9 +32,12 @@ void keyhold_scene_on_enter_encryptionmessage(void* ctx) {
 }
 bool keyhold_scene_on_event_encryptionmessage(void* ctx, SceneManagerEvent evt) {
     // take u to config variablelist screen
-    UNUSED(ctx);
     UNUSED(evt);
-    return false;
+    App* app = ctx;
+
+    scene_manager_next_scene(app->scene_manager, KeyholdSceneEncryptionConfig);
+
+    return true;
 }
 void keyhold_scene_on_exit_encryptionmessage(void* ctx) {
     App* app = ctx;

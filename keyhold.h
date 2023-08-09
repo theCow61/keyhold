@@ -18,6 +18,7 @@
 #include "scenes/export_screen.h"
 #include "scenes/config_scene.h"
 #include "scenes/encryption_message.h"
+#include "scenes/encryption_config_scene.h"
 #include "keyer.h"
 #include "saves.h"
 
@@ -29,6 +30,7 @@ typedef enum {
     KeyholdSceneExportScreen,
     KeyholdSceneConfig,
     KeyholdSceneEncryptionMessage,
+    KeyholdSceneEncryptionConfig,
     KeyholdSceneCount,
 } KeyholdScene;
 
