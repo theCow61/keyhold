@@ -43,6 +43,11 @@ typedef enum {
     KeyholdViewVariableItemList,
 } KeyholdView;
 
+typedef struct SelectorNames {
+    uint8_t name1;
+    uint8_t name2;
+} SelectorNames;
+
 typedef struct App {
     SceneManager* scene_manager;
     ViewDispatcher* vp;
@@ -59,5 +64,6 @@ typedef struct App {
     uint8_t* export_data;
     Saves* saves;
     EncryptorConfig* encryptor_config;
+    SelectorNames selector_names;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;

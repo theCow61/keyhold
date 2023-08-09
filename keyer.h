@@ -22,6 +22,8 @@ bool keyer_save_identity(Identity* idn, Saves* saves, Storage* storage, char* na
 
 bool keyer_generate_key_pair_and_save(char* name, Storage* storage);
 
+Identity keyer_get_identity(Storage* storage, const char* name);
+
 // void keyhold_load_save(Storage* storage);
 
 // void keyhold_unload_save();

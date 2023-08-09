@@ -183,6 +183,11 @@ bool keyer_save_identity(Identity* idn, Saves* saves, Storage* storage, char* na
     return true;
 }
 
+//TODO
+// Identity keyer_get_identity(Storage* storage, const char* name) {
+//
+// }
+
 typedef struct EncryptorConfig {
     Identity encrypt_as;
     Identity encrypt_for;

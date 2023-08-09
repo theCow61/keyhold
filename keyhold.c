@@ -193,6 +193,7 @@ static App* app_alloc() {
 
     app->loaded_identity = keyer_identity_init(NULL, NULL);
     app->encryptor_config = encryptor_config_alloc();
+    app->selector_names = (SelectorNames){0, 0};
 
     return app;
 }
