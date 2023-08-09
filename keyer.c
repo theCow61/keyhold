@@ -21,6 +21,7 @@ Identity keyer_identity_init(uint8_t* sk, uint8_t* pk) {
 // }
 
 void keyer_identity_clear(Identity* idn) {
+    if(idn == NULL) return;
     if(idn->secret_key != NULL) {
         crypto_wipe(idn->secret_key, 32);
     }
@@ -180,4 +181,56 @@ bool keyer_save_identity(Identity* idn, Saves* saves, Storage* storage, char* na
     furi_string_free(filepath);
 
     return true;
+}
+
+typedef struct EncryptorConfig {
+    Identity encrypt_as;
+    Identity encrypt_for;
+    uint8_t* plain_bytes;
+    /**
+     * encrypt_bytes size is size + sizeof(nonce) + sizeof(mac)
+    */
+    uint8_t* encrypt_bytes;
+    size_t size; // size of cipher/encrypted parts of encrypt_bytes in "length" like [size]
+} EncryptorConfig;
+
+EncryptorConfig* encryptor_config_alloc() {
+    EncryptorConfig* ecf = malloc(sizeof(EncryptorConfig));
+    ecf->encrypt_as = keyer_identity_init(NULL, NULL);
+    ecf->encrypt_for = keyer_identity_init(NULL, NULL);
+    ecf->plain_bytes = NULL;
+    ecf->encrypt_bytes = NULL;
+    ecf->size = 0;
+    // needs to be changed for file encryption
+    return ecf;
+}
+
+void encryptor_config_sync_pbuffer_str(EncryptorConfig* ecf, char* buf) {
+    ecf->plain_bytes = (uint8_t*)strdup(buf);
+    ecf->size = str_len((char*)ecf->plain_bytes);
+}
+
+void encryptor_config_reset(EncryptorConfig* ecf) {
+    if(ecf == NULL) return;
+    if(ecf->plain_bytes != NULL) {
+        crypto_wipe(ecf->plain_bytes, ecf->size);
+        free(ecf->plain_bytes);
+    }
+    if(ecf->encrypt_bytes != NULL) {
+        crypto_wipe(ecf->encrypt_bytes, ecf->size + 24 + 16);
+    }
+    ecf->plain_bytes = NULL;
+    ecf->encrypt_bytes = NULL;
+    keyer_identity_clear(&ecf->encrypt_as);
+    keyer_identity_clear(&ecf->encrypt_for);
+    ecf->size = 0;
+}
+
+void encryptor_config_free(EncryptorConfig* ecf) {
+    encryptor_config_reset(ecf);
+    free(ecf);
+}
+
+uint8_t* encryptor_config_get_plain_buffer(EncryptorConfig* ecf) {
+    return ecf->plain_bytes;
 }

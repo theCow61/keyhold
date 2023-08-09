@@ -111,6 +111,7 @@ void (*const keyhold_scene_on_enter_handlers[])(void*) = {
     keyhold_scene_on_enter_encryptionscreen,
     keyhold_scene_on_enter_exportscreen,
     keyhold_scene_on_enter_config,
+    keyhold_scene_on_enter_encryptionmessage,
 };
 
 bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
@@ -120,6 +121,7 @@ bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
     keyhold_scene_on_event_encryptionscreen,
     keyhold_scene_on_event_exportscreen,
     keyhold_scene_on_event_config,
+    keyhold_scene_on_event_encryptionmessage,
 };
 
 void (*const keyhold_scene_on_exit_handlers[])(void*) = {
@@ -129,6 +131,7 @@ void (*const keyhold_scene_on_exit_handlers[])(void*) = {
     keyhold_scene_on_exit_encryptionscreen,
     keyhold_scene_on_exit_exportscreen,
     keyhold_scene_on_exit_config,
+    keyhold_scene_on_exit_encryptionmessage,
 };
 
 static const SceneManagerHandlers keyhold_scene_manager_handlers = {
@@ -186,6 +189,7 @@ static App* app_alloc() {
         variable_item_list_get_view(app->view_variableitemlist));
 
     app->loaded_identity = keyer_identity_init(NULL, NULL);
+    app->encryptor_config = encryptor_config_alloc();
 
     return app;
 }
@@ -193,6 +197,7 @@ static App* app_alloc() {
 static void app_free(App* app) {
     furi_assert(app);
     keyer_identity_clear(&app->loaded_identity);
+    encryptor_config_free(app->encryptor_config);
     view_dispatcher_remove_view(app->vp, KeyholdViewSubmenu);
     view_dispatcher_remove_view(app->vp, KeyholdViewFileBrowser);
     view_dispatcher_remove_view(app->vp, KeyholdViewTextInput);

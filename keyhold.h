@@ -17,6 +17,7 @@
 #include "scenes/encryptionscreen_scene.h"
 #include "scenes/export_screen.h"
 #include "scenes/config_scene.h"
+#include "scenes/encryption_message.h"
 #include "keyer.h"
 #include "saves.h"
 
@@ -27,6 +28,7 @@ typedef enum {
     KeyholdSceneEncryptionScreen,
     KeyholdSceneExportScreen,
     KeyholdSceneConfig,
+    KeyholdSceneEncryptionMessage,
     KeyholdSceneCount,
 } KeyholdScene;
 
@@ -49,10 +51,11 @@ typedef struct App {
     Widget* view_widget;
     VariableItemList* view_variableitemlist;
     Storage* storage;
-    char all_purpose_string[30];
+    char all_purpose_string[255];
     // KeyholdScene return_scene_buffer;
     Identity loaded_identity;
     uint8_t* export_data;
     Saves* saves;
+    EncryptorConfig* encryptor_config;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;

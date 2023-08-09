@@ -8,6 +8,8 @@ typedef struct Identity {
     uint8_t* public_key;
 } Identity;
 
+typedef struct EncryptorConfig EncryptorConfig;
+
 /**
  * Pass NULL for any absent keys.
 */
@@ -25,3 +27,10 @@ bool keyer_generate_key_pair_and_save(char* name, Storage* storage);
 // void keyhold_unload_save();
 
 // bool saves_add(const char* save);
+
+EncryptorConfig* encryptor_config_alloc();
+void encryptor_config_reset(EncryptorConfig* ecf);
+void encryptor_config_free(EncryptorConfig* ecf);
+
+uint8_t* encryptor_config_get_plain_buffer(EncryptorConfig* ecf);
+void encryptor_config_sync_pbuffer_str(EncryptorConfig* ecf, char* buf);

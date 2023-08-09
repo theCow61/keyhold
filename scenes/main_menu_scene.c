@@ -5,6 +5,7 @@
 typedef enum {
     KeyholdMainMenuEventGenerateIdentity,
     KeyholdMainMenuEventEncryption,
+    KeyholdMainMenuEventEncryptionMessage,
 } KeyholdMainMenuEvent;
 
 void keyhold_callback_menu(void* ctx, uint32_t idx) {
@@ -17,16 +18,23 @@ void keyhold_callback_menu(void* ctx, uint32_t idx) {
     case 1:
         scene_manager_handle_custom_event(app->scene_manager, KeyholdMainMenuEventEncryption);
         break;
+    case 2:
+        scene_manager_handle_custom_event(
+            app->scene_manager, KeyholdMainMenuEventEncryptionMessage);
+        break;
     }
 }
 
 void keyhold_scene_on_enter_mainmenu(void* ctx) {
     App* app = ctx;
     keyer_identity_clear(&app->loaded_identity);
+    encryptor_config_reset(app->encryptor_config);
     submenu_reset(app->view_submenu);
     submenu_set_header(app->view_submenu, "Key Hold");
     submenu_add_item(app->view_submenu, "Generate Key Pair", 0, keyhold_callback_menu, app);
     submenu_add_item(app->view_submenu, "Encryption", 1, keyhold_callback_menu, app);
+    submenu_add_item(app->view_submenu, "Encrypt Message", 2, keyhold_callback_menu, app);
+    submenu_add_item(app->view_submenu, "Encrypt File", 3, keyhold_callback_menu, app);
     view_dispatcher_switch_to_view(app->vp, KeyholdViewSubmenu);
 }
 
@@ -44,7 +52,13 @@ bool keyhold_scene_on_event_mainmenu(void* ctx, SceneManagerEvent evt) {
             consumed = true;
             break;
         case KeyholdMainMenuEventEncryption:
+            consumed = true;
             scene_manager_next_scene(app->scene_manager, KeyholdSceneEncryptionScreen);
+            break;
+        case KeyholdMainMenuEventEncryptionMessage:
+            consumed = true;
+            scene_manager_next_scene(app->scene_manager, KeyholdSceneEncryptionMessage);
+            break;
 
         default:
             break;
