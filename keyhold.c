@@ -112,6 +112,7 @@ void (*const keyhold_scene_on_enter_handlers[])(void*) = {
     keyhold_scene_on_enter_config,
     keyhold_scene_on_enter_encryptionmessage,
     keyhold_scene_on_enter_encryptionconfig,
+    keyhold_scene_on_enter_decryptionfile,
 };
 
 bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
@@ -122,6 +123,7 @@ bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
     keyhold_scene_on_event_config,
     keyhold_scene_on_event_encryptionmessage,
     keyhold_scene_on_event_encryptionconfig,
+    keyhold_scene_on_event_decryptionfile,
 };
 
 void (*const keyhold_scene_on_exit_handlers[])(void*) = {
@@ -132,6 +134,7 @@ void (*const keyhold_scene_on_exit_handlers[])(void*) = {
     keyhold_scene_on_exit_config,
     keyhold_scene_on_exit_encryptionmessage,
     keyhold_scene_on_exit_encryptionconfig,
+    keyhold_scene_on_exit_decryptionfile,
 };
 
 static const SceneManagerHandlers keyhold_scene_manager_handlers = {
