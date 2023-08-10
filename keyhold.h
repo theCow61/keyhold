@@ -14,7 +14,6 @@
 #include "scenes/main_menu_scene.h"
 #include "scenes/loaded_identity_scene.h"
 #include "scenes/namer_scene.h"
-#include "scenes/encryptionscreen_scene.h"
 #include "scenes/export_screen.h"
 #include "scenes/config_scene.h"
 #include "scenes/encryption_message.h"
@@ -26,7 +25,6 @@ typedef enum {
     KeyholdSceneMainMenu,
     KeyholdSceneNamer,
     KeyholdSceneLoadedIdentity,
-    KeyholdSceneEncryptionScreen,
     KeyholdSceneExportScreen,
     KeyholdSceneConfig,
     KeyholdSceneEncryptionMessage,

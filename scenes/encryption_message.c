@@ -1,4 +1,3 @@
-#include "encryptionscreen_scene.h"
 #include "../keyhold.h"
 #include "../lib/monocypher/monocypher.h"
 
