@@ -347,20 +347,28 @@ uint8_t* encryptor_config_encrypt(EncryptorConfig* ecf) {
 
     crypto_chacha20_h(shared_key, shared_secret, (uint8_t[16]){0});
 
-    uint8_t mac[16];
-    // uint8_t nonce[24];
-    furi_hal_random_fill_buf(ecf->encrypt_bytes, 24); //nonce
-    uint8_t enc_bytes[size];
-
     // encrypt-bytes is passed in as nonce as first 24 bytes is nonce
+
+    uint8_t* nonce = ecf->encrypt_bytes; // first 24 bytes
+    furi_hal_random_fill_buf(ecf->encrypt_bytes, 24); //nonce
+    uint8_t* enc_bytes = ecf->encrypt_bytes + 24; // between first and last 24 and 16 bytes
+    uint8_t* mac = ecf->encrypt_bytes + 24 + size; // last 16 bytes
+
     crypto_aead_lock(
-        enc_bytes, mac, shared_key, ecf->encrypt_bytes, NULL, 0, ecf->plain_bytes, size);
+        enc_bytes, // encryption part
+        mac, // mac
+        shared_key,
+        nonce, // nonce
+        NULL,
+        0,
+        ecf->plain_bytes,
+        size);
 
     // nonce cipher mac
 
     // memcpy(ecf->encrypt_bytes, nonce, 24);
-    memcpy(ecf->encrypt_bytes + 24, enc_bytes, size);
-    memcpy(ecf->encrypt_bytes + 24 + size, mac, 16);
+    // memcpy(ecf->encrypt_bytes + 24, enc_bytes, size);
+    // memcpy(ecf->encrypt_bytes + 24 + size, mac, 16);
 
     // nonce does not need to be wiped, let it fall off stack
     // enc_bytes does not need to be wiped, let it fall off stack

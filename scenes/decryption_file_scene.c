@@ -10,6 +10,9 @@ void keyhold_scene_on_enter_decryptionfile(void* ctx) {
 }
 
 bool keyhold_scene_on_event_decryptionfile(void* ctx, SceneManagerEvent evt) {
+    UNUSED(ctx);
+    UNUSED(evt);
+    return false;
 }
 
 void keyhold_scene_on_exit_decryptionfile(void* ctx) {
