@@ -16,9 +16,22 @@ void keyhold_scene_on_enter_exportscreen(void* ctx) {
     view_dispatcher_switch_to_view(app->vp, KeyholdViewSubmenu);
 }
 bool keyhold_scene_on_event_exportscreen(void* ctx, SceneManagerEvent evt) {
-    UNUSED(ctx);
-    UNUSED(evt);
-    return false;
+    App* app = ctx;
+
+    bool consumed = false;
+
+    switch(evt.type) {
+    case SceneManagerEventTypeCustom:
+        break;
+    case SceneManagerEventTypeBack:
+        scene_manager_search_and_switch_to_another_scene(app->scene_manager, KeyholdSceneMainMenu);
+        consumed = true;
+        break;
+    default:
+        break;
+    }
+
+    return consumed;
 }
 void keyhold_scene_on_exit_exportscreen(void* ctx) {
     App* app = ctx;

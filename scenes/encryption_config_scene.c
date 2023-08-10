@@ -64,7 +64,9 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
     uint8_t* encryption = encryptor_config_encrypt(app->encryptor_config);
     // set byte buffer to this pointer and also test if encryption is correct and decryptable
 
-    FURI_LOG_D("keyhold", "%s", encryption);
+    app->export_data = encryption;
+
+    scene_manager_handle_custom_event(app->scene_manager, 0);
 }
 
 // variable_item_list select with <your identity> <their identity> ([export] -> universal export screen)
@@ -110,9 +112,18 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
     view_dispatcher_switch_to_view(app->vp, KeyholdViewVariableItemList);
 }
 bool keyhold_scene_on_event_encryptionconfig(void* ctx, SceneManagerEvent evt) {
-    UNUSED(ctx);
     UNUSED(evt);
-    return false;
+
+    App* app = ctx;
+
+    bool consumed = false;
+
+    if(evt.type == SceneManagerEventTypeCustom) {
+        scene_manager_next_scene(app->scene_manager, KeyholdSceneExportScreen);
+        consumed = true;
+    }
+
+    return consumed;
 }
 void keyhold_scene_on_exit_encryptionconfig(void* ctx) {
     App* app = ctx;

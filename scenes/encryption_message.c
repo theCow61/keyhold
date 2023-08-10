@@ -35,9 +35,15 @@ bool keyhold_scene_on_event_encryptionmessage(void* ctx, SceneManagerEvent evt) 
     UNUSED(evt);
     App* app = ctx;
 
-    scene_manager_next_scene(app->scene_manager, KeyholdSceneEncryptionConfig);
+    bool consumed = false;
 
-    return true;
+    // Back event will end up executing without this condition
+    if(evt.type == SceneManagerEventTypeCustom) {
+        scene_manager_next_scene(app->scene_manager, KeyholdSceneEncryptionConfig);
+        consumed = true;
+    }
+
+    return consumed;
 }
 void keyhold_scene_on_exit_encryptionmessage(void* ctx) {
     App* app = ctx;
