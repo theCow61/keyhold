@@ -22,7 +22,19 @@ bool keyer_save_identity(Identity* idn, Saves* saves, Storage* storage, char* na
 
 bool keyer_generate_key_pair_and_save(char* name, Storage* storage);
 
+/**
+ * grabs `Identity` from loaded saves at the given index.
+ *
+ * @param storage storage
+ * @param index index in saves
+ * @return corresponding `Identity`
+ */
 Identity keyer_get_identity(Storage* storage, const char* name);
+
+/**
+ * limits secret data being active in memory
+ */
+Identity keyer_get_pub_identity(Storage* storage, const char* name);
 
 // void keyhold_load_save(Storage* storage);
 
@@ -36,3 +48,13 @@ void encryptor_config_free(EncryptorConfig* ecf);
 
 uint8_t* encryptor_config_get_plain_buffer(EncryptorConfig* ecf);
 void encryptor_config_sync_pbuffer_str(EncryptorConfig* ecf, char* buf);
+
+void encryptor_config_set_as_identity(EncryptorConfig* ecf, Identity idn);
+void encryptor_config_set_to_identity(EncryptorConfig* ecf, Identity idn);
+
+/**
+ * config is mostly wiped post encrypt, you can only retrieve your encryption message and its size
+ */
+uint8_t* encryptor_config_encrypt(EncryptorConfig* ecf);
+
+size_t encryptor_config_get_size(EncryptorConfig* ecf);

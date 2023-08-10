@@ -1,7 +1,9 @@
 #include "encryption_config_scene.h"
+#include "applications_user/keyhold/keyer.h"
 #include "applications_user/keyhold/saves.h"
 #include "gui/view_dispatcher.h"
 #include <gui/modules/variable_item_list.h>
+#include <storage/storage.h> // temp
 
 #include "../keyhold.h"
 
@@ -42,12 +44,27 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
 
     App* app = ctx;
 
+    size_t n_saves = saves_get_number_of_saves(app->saves);
+    if(n_saves == 0) return; // no saves
+
     const char* from_save = saves_get_save_at(app->saves, app->selector_names.name1);
     const char* to_save = saves_get_save_at(app->saves, app->selector_names.name2);
-    FURI_LOG_D("keyhold", "%s %s", from_save, to_save);
 
-    // keyer_get_identity
-    // encryptor_sync_identity...
+    Identity from_idn = keyer_get_identity(app->storage, from_save);
+    Identity to_idn = keyer_get_pub_identity(app->storage, to_save);
+
+    // might have to modify for anonymous signing
+    if(from_idn.secret_key == NULL || from_idn.public_key == NULL || to_idn.public_key == NULL ||
+       encryptor_config_get_plain_buffer(app->encryptor_config) == NULL)
+        return;
+
+    encryptor_config_set_as_identity(app->encryptor_config, from_idn);
+    encryptor_config_set_to_identity(app->encryptor_config, to_idn);
+
+    uint8_t* encryption = encryptor_config_encrypt(app->encryptor_config);
+    // set byte buffer to this pointer and also test if encryption is correct and decryptable
+
+    FURI_LOG_D("keyhold", "%s", encryption);
 }
 
 // variable_item_list select with <your identity> <their identity> ([export] -> universal export screen)
