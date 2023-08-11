@@ -166,6 +166,7 @@ static App* app_alloc() {
     App* app = malloc(sizeof(App));
 
     app->storage = furi_record_open(RECORD_STORAGE);
+    app->dialogs = furi_record_open(RECORD_DIALOGS);
 
     app->saves = saves_alloc_load(app->storage);
 
@@ -201,7 +202,7 @@ static App* app_alloc() {
     app->encryptor_config = encryptor_config_alloc();
     app->selector_names = (SelectorNames){0, 0};
     app->popup_text = NULL;
-
+    app->file_browser_path = furi_string_alloc();
     return app;
 }
 
@@ -224,7 +225,9 @@ static void app_free(App* app) {
     widget_free(app->view_widget);
     variable_item_list_free(app->view_variableitemlist);
     furi_record_close(RECORD_STORAGE);
+    furi_record_close(RECORD_DIALOGS);
     // saves_free(app->saves);
+    furi_string_free(app->file_browser_path);
     free(app);
 }
 

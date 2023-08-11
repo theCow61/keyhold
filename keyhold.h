@@ -23,6 +23,7 @@
 #include "scenes/arb_popup.h" // moves all these scene things to keyhold.c
 #include "keyer.h"
 #include "saves.h"
+#include <dialogs/dialogs.h>
 
 typedef enum {
     KeyholdSceneMainMenu,
@@ -71,5 +72,7 @@ typedef struct App {
     EncryptorConfig* encryptor_config;
     SelectorNames selector_names;
     FuriString* popup_text;
+    FuriString* file_browser_path;
+    DialogsApp* dialogs;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;
