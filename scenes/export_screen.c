@@ -1,9 +1,19 @@
 #include "export_screen.h"
 #include "../keyhold.h"
+#include "../exporter.h"
 
 void keyhold_callback_exportscreen(void* ctx, uint32_t idx) {
-    UNUSED(ctx);
-    UNUSED(idx);
+    App* app = ctx;
+
+    switch(idx) {
+    case 0:
+        app->popup_text =
+            exporter_save_buffer_as_file(app->export_data, app->export_size, app->storage);
+        scene_manager_handle_custom_event(app->scene_manager, 0);
+        break;
+    default:
+        break;
+    }
 }
 
 void keyhold_scene_on_enter_exportscreen(void* ctx) {
@@ -22,6 +32,15 @@ bool keyhold_scene_on_event_exportscreen(void* ctx, SceneManagerEvent evt) {
 
     switch(evt.type) {
     case SceneManagerEventTypeCustom:
+        switch(evt.event) {
+        case 0: // save as file
+            scene_manager_next_scene(app->scene_manager, KeyholdSceneArbPopup);
+            // pop up "Saved at: "
+            consumed = true;
+            break;
+        default:
+            break;
+        }
         break;
     case SceneManagerEventTypeBack:
         scene_manager_search_and_switch_to_another_scene(app->scene_manager, KeyholdSceneMainMenu);

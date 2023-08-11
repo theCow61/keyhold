@@ -65,6 +65,7 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
     // set byte buffer to this pointer and also test if encryption is correct and decryptable
 
     app->export_data = encryption;
+    app->export_size = encryptor_config_get_size(app->encryptor_config) + 24 + 16;
 
     scene_manager_handle_custom_event(app->scene_manager, 0);
 }

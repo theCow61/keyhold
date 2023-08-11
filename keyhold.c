@@ -113,6 +113,8 @@ void (*const keyhold_scene_on_enter_handlers[])(void*) = {
     keyhold_scene_on_enter_encryptionmessage,
     keyhold_scene_on_enter_encryptionconfig,
     keyhold_scene_on_enter_decryptionfile,
+    keyhold_scene_on_enter_filesaver,
+    keyhold_scene_on_enter_arbpopup,
 };
 
 bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
@@ -124,6 +126,8 @@ bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
     keyhold_scene_on_event_encryptionmessage,
     keyhold_scene_on_event_encryptionconfig,
     keyhold_scene_on_event_decryptionfile,
+    keyhold_scene_on_event_filesaver,
+    keyhold_scene_on_event_arbpopup,
 };
 
 void (*const keyhold_scene_on_exit_handlers[])(void*) = {
@@ -135,6 +139,8 @@ void (*const keyhold_scene_on_exit_handlers[])(void*) = {
     keyhold_scene_on_exit_encryptionmessage,
     keyhold_scene_on_exit_encryptionconfig,
     keyhold_scene_on_exit_decryptionfile,
+    keyhold_scene_on_exit_filesaver,
+    keyhold_scene_on_exit_arbpopup,
 };
 
 static const SceneManagerHandlers keyhold_scene_manager_handlers = {
@@ -194,6 +200,7 @@ static App* app_alloc() {
     app->loaded_identity = keyer_identity_init(NULL, NULL);
     app->encryptor_config = encryptor_config_alloc();
     app->selector_names = (SelectorNames){0, 0};
+    app->popup_text = NULL;
 
     return app;
 }

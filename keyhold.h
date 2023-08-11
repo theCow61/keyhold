@@ -19,6 +19,8 @@
 #include "scenes/encryption_message.h"
 #include "scenes/encryption_config_scene.h"
 #include "scenes/decryption_file_scene.h"
+#include "scenes/file_saver_scene.h"
+#include "scenes/arb_popup.h" // moves all these scene things to keyhold.c
 #include "keyer.h"
 #include "saves.h"
 
@@ -31,6 +33,8 @@ typedef enum {
     KeyholdSceneEncryptionMessage,
     KeyholdSceneEncryptionConfig,
     KeyholdSceneDecryptionFile,
+    KeyholdSceneFileSaver,
+    KeyholdSceneArbPopup,
     KeyholdSceneCount,
 } KeyholdScene;
 
@@ -62,8 +66,10 @@ typedef struct App {
     // KeyholdScene return_scene_buffer;
     Identity loaded_identity;
     uint8_t* export_data;
+    size_t export_size;
     Saves* saves;
     EncryptorConfig* encryptor_config;
     SelectorNames selector_names;
+    FuriString* popup_text;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
 } App;
