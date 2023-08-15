@@ -11,7 +11,7 @@
 // 1. render option as needed for user, not rending more than whats needed BUT a whole deref for every rendering
 // 2. render everything at once regardless if user will ever see it, minimal derefs. Tho I would have to do a strdup for each value or else everything will refer to same thing.
 
-void keyhold_callback_change_from(
+void keyhold_callback_change_fromR(
     VariableItem* vi) { // we will render text as user filps through selection
 
     // Option 1
@@ -26,7 +26,7 @@ void keyhold_callback_change_from(
 
 // We make 2 to avoid branching
 
-void keyhold_callback_change_to(
+void keyhold_callback_change_toR(
     VariableItem* vi) { // we will render text as user filps through selection
 
     // Option 1
@@ -38,7 +38,7 @@ void keyhold_callback_change_to(
     app->selector_names.name2 = idx;
 }
 
-void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
+void keyhold_callback_dencrypt(void* ctx, uint32_t idx) {
     if(idx != 2)
         return; // 0 is when clicked selector 1 is when clicked selector 2 is when clicked our button
 
@@ -50,28 +50,27 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
     const char* from_save = saves_get_save_at(app->saves, app->selector_names.name1);
     const char* to_save = saves_get_save_at(app->saves, app->selector_names.name2);
 
-    Identity from_idn = keyer_get_identity(app->storage, from_save);
-    Identity to_idn = keyer_get_pub_identity(app->storage, to_save);
+    Identity from_idn = keyer_get_pub_identity(app->storage, from_save);
+    Identity to_idn = keyer_get_identity(app->storage, to_save);
 
     // might have to modify for anonymous signing
-    if(from_idn.secret_key == NULL || from_idn.public_key == NULL || to_idn.public_key == NULL ||
-       encryptor_config_get_plain_buffer(app->encryptor_config) == NULL)
-        return;
+    if(from_idn.public_key == NULL || to_idn.secret_key == NULL) return;
 
     encryptor_config_set_as_identity(app->encryptor_config, from_idn);
     encryptor_config_set_to_identity(app->encryptor_config, to_idn);
 
-    uint8_t* encryption = encryptor_config_encrypt(app->encryptor_config);
+    uint8_t* decryption = encryptor_config_decrypt(app->encryptor_config);
     // set byte buffer to this pointer and also test if encryption is correct and decryptable
 
-    app->export_data = encryption;
-    app->export_size = encryptor_config_get_size(app->encryptor_config) + 24 + 16;
+    if(decryption == NULL) return;
+    app->export_data = decryption;
+    app->export_size = encryptor_config_get_size(app->encryptor_config);
 
     scene_manager_handle_custom_event(app->scene_manager, 0);
 }
 
 // variable_item_list select with <your identity> <their identity> ([export] -> universal export screen)
-void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
+void keyhold_scene_on_enter_decryptionconfig(void* ctx) {
     App* app = ctx;
     variable_item_list_reset(app->view_variableitemlist);
 
@@ -82,15 +81,15 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
 
     VariableItem* from_selection = variable_item_list_add(
         app->view_variableitemlist,
-        "Encrypt as",
+        "Encryptor key (f: anon)",
         n_saves,
-        keyhold_callback_change_from,
+        keyhold_callback_change_fromR,
         app); // app is probably not correct ctx unless VariableItem contains this in it
     VariableItem* to_selection = variable_item_list_add(
         app->view_variableitemlist,
-        "Encrypt for",
+        "Your key",
         n_saves,
-        keyhold_callback_change_to,
+        keyhold_callback_change_toR,
         app); // app is probably not correct ctx unless VariableItem contains this in it
 
     if(n_saves > 0) {
@@ -103,16 +102,16 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
 
     variable_item_list_add(
         app->view_variableitemlist,
-        "Encrypt & Export",
+        "Decrypt & Export",
         0,
-        keyhold_callback_change_from,
+        keyhold_callback_change_fromR,
         NULL); // Button, change callback should not be run
     variable_item_list_set_enter_callback(
-        app->view_variableitemlist, keyhold_callback_aencrypt, app);
+        app->view_variableitemlist, keyhold_callback_dencrypt, app);
 
     view_dispatcher_switch_to_view(app->vp, KeyholdViewVariableItemList);
 }
-bool keyhold_scene_on_event_encryptionconfig(void* ctx, SceneManagerEvent evt) {
+bool keyhold_scene_on_event_decryptionconfig(void* ctx, SceneManagerEvent evt) {
     App* app = ctx;
 
     bool consumed = false;
@@ -124,7 +123,7 @@ bool keyhold_scene_on_event_encryptionconfig(void* ctx, SceneManagerEvent evt) {
 
     return consumed;
 }
-void keyhold_scene_on_exit_encryptionconfig(void* ctx) {
+void keyhold_scene_on_exit_decryptionconfig(void* ctx) {
     App* app = ctx;
     app->selector_names.name1 = 0;
     app->selector_names.name2 = 0;

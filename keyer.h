@@ -58,3 +58,7 @@ void encryptor_config_set_to_identity(EncryptorConfig* ecf, Identity idn);
 uint8_t* encryptor_config_encrypt(EncryptorConfig* ecf);
 
 size_t encryptor_config_get_size(EncryptorConfig* ecf);
+
+uint8_t* encryptor_config_encrypted_bytes_buf_init(EncryptorConfig* ecf, size_t size);
+
+uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf);

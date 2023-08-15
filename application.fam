@@ -12,5 +12,5 @@ App(
     Lib(
       name="monocypher",
     )
-  ]
+  ],
 )

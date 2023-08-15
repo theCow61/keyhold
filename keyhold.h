@@ -21,6 +21,7 @@
 #include "scenes/decryption_file_scene.h"
 #include "scenes/file_saver_scene.h"
 #include "scenes/arb_popup.h" // moves all these scene things to keyhold.c
+#include "scenes/decryption_config_scene.h"
 #include "keyer.h"
 #include "saves.h"
 #include <dialogs/dialogs.h>
@@ -36,6 +37,7 @@ typedef enum {
     KeyholdSceneDecryptionFile,
     KeyholdSceneFileSaver,
     KeyholdSceneArbPopup,
+    KeyholdSceneDecryptionConfig,
     KeyholdSceneCount,
 } KeyholdScene;
 

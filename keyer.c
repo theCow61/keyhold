@@ -388,3 +388,55 @@ uint8_t* encryptor_config_encrypt(EncryptorConfig* ecf) {
 size_t encryptor_config_get_size(EncryptorConfig* ecf) {
     return ecf->size;
 }
+
+/** 
+ * sets to decryption mode. initializes the buffers and returns the encryption buffer. updates size.
+*/
+uint8_t* encryptor_config_encrypted_bytes_buf_init(EncryptorConfig* ecf, size_t size) {
+    ecf->encrypt_bytes = malloc(size); // might have to be * sizeof(uint8_t)
+    ecf->plain_bytes = malloc(size);
+    ecf->size = size - (24 + 16);
+    return ecf->encrypt_bytes;
+}
+
+/**
+ * Size should be full message size, after this it will just be size of deciphered part
+*/
+uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf) {
+    // size should be of whole thing (nonce mac included)
+
+    uint8_t* sender_pk =
+        ecf->encrypt_as.public_key; // keep in mind for future the anonymous feature
+
+    uint8_t* our_sk = ecf->encrypt_for.secret_key;
+
+    uint8_t shared_secret[32];
+
+    crypto_x25519(shared_secret, our_sk, sender_pk);
+
+    uint8_t shared_key[32];
+
+    crypto_chacha20_h(shared_key, shared_secret, (uint8_t[16]){0});
+
+    if(crypto_aead_unlock(
+           ecf->plain_bytes,
+           ecf->encrypt_bytes + ecf->size + 24,
+           shared_key,
+           ecf->encrypt_bytes,
+           NULL,
+           0,
+           ecf->encrypt_bytes + 24,
+           ecf->size)) {
+        crypto_wipe(shared_secret, 32);
+        crypto_wipe(shared_key, 32);
+        return NULL;
+    }
+
+    crypto_wipe(shared_secret, 32);
+    crypto_wipe(shared_key, 32);
+    keyer_identity_clear(&ecf->encrypt_for);
+    keyer_identity_clear(&ecf->encrypt_as);
+    free(ecf->encrypt_bytes);
+    ecf->encrypt_bytes = NULL;
+    return ecf->plain_bytes;
+}
