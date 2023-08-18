@@ -20,6 +20,10 @@ void keyhold_callback_exportscreen(void* ctx, uint32_t idx) {
             app->export_size,
             app->export_type); // change message type to dynamic
         break;
+    case 2:
+        app->popup_text = furi_string_alloc_printf("%.*s", app->export_size, app->export_data);
+        scene_manager_handle_custom_event(app->scene_manager, 1);
+        break;
     default:
         break;
     }
@@ -31,6 +35,7 @@ void keyhold_scene_on_enter_exportscreen(void* ctx) {
     submenu_set_header(app->view_submenu, "Select Export Option");
     submenu_add_item(app->view_submenu, "Save as File", 0, keyhold_callback_exportscreen, app);
     submenu_add_item(app->view_submenu, "RF Broadcast", 1, keyhold_callback_exportscreen, app);
+    submenu_add_item(app->view_submenu, "Show as Text", 2, keyhold_callback_exportscreen, app);
 
     view_dispatcher_switch_to_view(app->vp, KeyholdViewSubmenu);
 }
@@ -47,6 +52,9 @@ bool keyhold_scene_on_event_exportscreen(void* ctx, SceneManagerEvent evt) {
             // pop up "Saved at: "
             consumed = true;
             break;
+        case 1: // popup
+            scene_manager_next_scene(app->scene_manager, KeyholdSceneArbPopup);
+            consumed = true;
         default:
             break;
         }
