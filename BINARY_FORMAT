@@ -1,0 +1,19 @@
+A encrypted message, which we will call a `EncryptedMessage`, will be formated like so:
+
+<nonce (24 bytes)><cipher (x bytes)><mac (16 bytes)>
+
+
+A anonymous encrypted message, which we will call a `AnonymousEncryptedMessage`, will be formated like so:
+
+<ephemoric public key (32 bytes)><Message (y bytes)>
+
+
+A RF message will be formated like so:
+
+"KY"<version counter (1 byte)><message type id (1 byte)><T/F to be continued (1 byte)><Message (p bytes)>
+
+message type ids enum
+
+
+9: is a continuation
+

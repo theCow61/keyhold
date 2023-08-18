@@ -206,6 +206,8 @@ static App* app_alloc() {
     app->selector_names = (SelectorNames){0, 0};
     app->popup_text = NULL;
     app->file_browser_path = furi_string_alloc();
+    app->subghz_txrx = subghz_tx_rx_worker_alloc();
+    subghz_devices_init();
     return app;
 }
 
@@ -231,11 +233,17 @@ static void app_free(App* app) {
     furi_record_close(RECORD_DIALOGS);
     // saves_free(app->saves);
     furi_string_free(app->file_browser_path);
+    if(subghz_tx_rx_worker_is_running(app->subghz_txrx))
+        subghz_tx_rx_worker_stop(app->subghz_txrx);
+    subghz_tx_rx_worker_free(app->subghz_txrx);
+    subghz_devices_deinit();
     free(app);
 }
 
 uint8_t keyhold_app(void* p) {
     UNUSED(p);
+
+    furi_hal_power_suppress_charge_enter();
 
     App* app = app_alloc();
 
@@ -248,5 +256,6 @@ uint8_t keyhold_app(void* p) {
 
     // keyhold_unload_save();
     app_free(app);
+    furi_hal_power_suppress_charge_exit();
     return 0;
 }

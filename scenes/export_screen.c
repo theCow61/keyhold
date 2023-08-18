@@ -4,12 +4,21 @@
 
 void keyhold_callback_exportscreen(void* ctx, uint32_t idx) {
     App* app = ctx;
+    FURI_LOG_D("keyhold", "d");
 
     switch(idx) {
     case 0:
         app->popup_text =
             exporter_save_buffer_as_file(app->export_data, app->export_size, app->storage);
         scene_manager_handle_custom_event(app->scene_manager, 0);
+        break;
+    case 1:
+        FURI_LOG_D("keyhold", "d");
+        exporter_broadcast_buffer(
+            app->subghz_txrx,
+            app->export_data,
+            app->export_size,
+            app->export_type); // change message type to dynamic
         break;
     default:
         break;

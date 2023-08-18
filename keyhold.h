@@ -25,6 +25,8 @@
 #include "keyer.h"
 #include "saves.h"
 #include <dialogs/dialogs.h>
+#include <lib/subghz/subghz_tx_rx_worker.h>
+#include "exporter.h"
 
 typedef enum {
     KeyholdSceneMainMenu,
@@ -70,6 +72,7 @@ typedef struct App {
     Identity loaded_identity;
     uint8_t* export_data;
     size_t export_size;
+    ExporterMessageType export_type;
     Saves* saves;
     EncryptorConfig* encryptor_config;
     SelectorNames selector_names;
@@ -77,4 +80,5 @@ typedef struct App {
     FuriString* file_browser_path;
     DialogsApp* dialogs;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
+    SubGhzTxRxWorker* subghz_txrx;
 } App;

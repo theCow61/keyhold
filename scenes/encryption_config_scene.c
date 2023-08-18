@@ -118,6 +118,7 @@ bool keyhold_scene_on_event_encryptionconfig(void* ctx, SceneManagerEvent evt) {
     bool consumed = false;
 
     if(evt.type == SceneManagerEventTypeCustom) {
+        app->export_type = ExporterMessageTypeEncryptedMessage;
         scene_manager_next_scene(app->scene_manager, KeyholdSceneExportScreen);
         consumed = true;
     }
