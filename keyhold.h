@@ -70,6 +70,7 @@ typedef struct App {
     char all_purpose_string[255];
     // KeyholdScene return_scene_buffer;
     Identity loaded_identity;
+    bool epho_anon_mode;
     uint8_t* export_data;
     size_t export_size;
     ExporterMessageType export_type;

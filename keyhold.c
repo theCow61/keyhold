@@ -208,6 +208,7 @@ static App* app_alloc() {
     app->file_browser_path = furi_string_alloc();
     app->subghz_txrx = subghz_tx_rx_worker_alloc();
     subghz_devices_init();
+    app->epho_anon_mode = false;
     return app;
 }
 

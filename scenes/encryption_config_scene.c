@@ -38,8 +38,14 @@ void keyhold_callback_change_to(
     app->selector_names.name2 = idx;
 }
 
+void keyhold_callback_anon_encrypt(VariableItem* vi) {
+    App* app = variable_item_get_context(vi);
+    // false is 0 and true is 1 so this should line up
+    app->epho_anon_mode = variable_item_get_current_value_index(vi);
+}
+
 void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
-    if(idx != 2)
+    if(idx != 3)
         return; // 0 is when clicked selector 1 is when clicked selector 2 is when clicked our button
 
     App* app = ctx;
@@ -50,7 +56,12 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
     const char* from_save = saves_get_save_at(app->saves, app->selector_names.name1);
     const char* to_save = saves_get_save_at(app->saves, app->selector_names.name2);
 
-    Identity from_idn = keyer_get_identity(app->storage, from_save);
+    Identity from_idn;
+    if(!app->epho_anon_mode) {
+        from_idn = keyer_get_identity(app->storage, from_save);
+    } else {
+        from_idn = keyer_generate_keypair(); // generate random keypair
+    }
     Identity to_idn = keyer_get_pub_identity(app->storage, to_save);
 
     // might have to modify for anonymous signing
@@ -92,6 +103,14 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
         n_saves,
         keyhold_callback_change_to,
         app); // app is probably not correct ctx unless VariableItem contains this in it
+
+    VariableItem* anon_selector = variable_item_list_add(
+        app->view_variableitemlist, "Anonymously?", 2, keyhold_callback_anon_encrypt, app);
+
+    variable_item_set_current_value_index(anon_selector, 1);
+    variable_item_set_current_value_text(anon_selector, "Y");
+    variable_item_set_current_value_index(anon_selector, 0);
+    variable_item_set_current_value_text(anon_selector, "N");
 
     if(n_saves > 0) {
         const char* first_save = saves_get_save_at(app->saves, 0);
