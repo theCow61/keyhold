@@ -5,15 +5,14 @@ A encrypted message, which we will call a `EncryptedMessage`, will be formated l
 
 A anonymous encrypted message, which we will call a `AnonymousEncryptedMessage`, will be formated like so:
 
-<ephemoric public key (32 bytes)><Message (y bytes)>
+<ephemoric public key (32 bytes)><EncryptedMessageMessage (y bytes)>
 
 
-A RF message will be formated like so:
+Any message will be formatted like so. Max size is 64 bytes as thats what CC1101 can handle so multiple
+of these may be required for a single message.
 
-"KY"<version counter (1 byte)><message type id (1 byte)><T/F to be continued (1 byte)><Message (p bytes)>
-
-message type ids enum
+"KY"<version counter (1 byte)><message type id (1 byte)><portion of message in rest of buffer><Message (p bytes)>
 
 
-9: is a continuation
+Message type 9: is a continuation
 
