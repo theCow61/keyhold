@@ -62,3 +62,5 @@ size_t encryptor_config_get_size(EncryptorConfig* ecf);
 uint8_t* encryptor_config_encrypted_bytes_buf_init(EncryptorConfig* ecf, size_t size);
 
 uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf);
+
+size_t str_len(char* str);

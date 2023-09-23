@@ -38,6 +38,14 @@ void keyhold_callback_change_to(
     app->selector_names.name2 = idx;
 }
 
+void keyhold_callback_anon_switch(VariableItem* vi) {
+  if (variable_item_get_current_value_index(vi) == 1) {
+    variable_item_set_current_value_text(vi, "Y");
+  } else {
+    variable_item_set_current_value_text(vi, "N");
+  }
+}
+
 void keyhold_callback_anon_encrypt(VariableItem* vi) {
     App* app = variable_item_get_context(vi);
     // false is 0 and true is 1 so this should line up
@@ -105,10 +113,8 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
         app); // app is probably not correct ctx unless VariableItem contains this in it
 
     VariableItem* anon_selector = variable_item_list_add(
-        app->view_variableitemlist, "Anonymously?", 2, keyhold_callback_anon_encrypt, app);
+        app->view_variableitemlist, "Anonymously?", 2, keyhold_callback_anon_switch, app);
 
-    variable_item_set_current_value_index(anon_selector, 1);
-    variable_item_set_current_value_text(anon_selector, "Y");
     variable_item_set_current_value_index(anon_selector, 0);
     variable_item_set_current_value_text(anon_selector, "N");
 
