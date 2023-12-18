@@ -1,6 +1,6 @@
 #include "encryption_config_scene.h"
-#include "applications_user/keyhold/keyer.h"
-#include "applications_user/keyhold/saves.h"
+#include "../keyer.h"
+#include "../saves.h"
 #include "gui/view_dispatcher.h"
 #include <gui/modules/variable_item_list.h>
 #include <storage/storage.h> // temp

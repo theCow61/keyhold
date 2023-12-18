@@ -1,7 +1,7 @@
 #include <storage/storage.h>
 #include <lib/subghz/subghz_tx_rx_worker.h>
 #include "exporter.h"
-#include <lib/subghz/devices/registry.h>
+// #include <lib/subghz/devices/registry.h>
 #include <applications/drivers/subghz/cc1101_ext/cc1101_ext_interconnect.h>
 #include <lib/subghz/devices/cc1101_int/cc1101_int_interconnect.h>
 

@@ -1,6 +1,6 @@
 #include "encryption_config_scene.h"
-#include "applications_user/keyhold/keyer.h"
-#include "applications_user/keyhold/saves.h"
+#include "../keyer.h"
+#include "../saves.h"
 #include "gui/view_dispatcher.h"
 #include <gui/modules/variable_item_list.h>
 #include <storage/storage.h> // temp
@@ -38,11 +38,16 @@ void keyhold_callback_change_to(
     app->selector_names.name2 = idx;
 }
 
+// lol global variable who cares
+int anon = 0;
+
 void keyhold_callback_anon_switch(VariableItem* vi) {
   if (variable_item_get_current_value_index(vi) == 1) {
     variable_item_set_current_value_text(vi, "Y");
+    anon = 1;
   } else {
     variable_item_set_current_value_text(vi, "N");
+    anon = 0;
   }
 }
 
