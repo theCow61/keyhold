@@ -6,7 +6,8 @@ App(
   stack_size=2 * 1024,
   entry_point="keyhold_app",
   requires=[
-    "gui"
+    "gui",
+    "bt"
   ],
   fap_private_libs=[
     Lib(

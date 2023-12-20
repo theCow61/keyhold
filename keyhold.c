@@ -116,6 +116,7 @@ void (*const keyhold_scene_on_enter_handlers[])(void*) = {
     keyhold_scene_on_enter_filesaver,
     keyhold_scene_on_enter_arbpopup,
     keyhold_scene_on_enter_decryptionconfig,
+    keyhold_scene_on_enter_bluetooth_setauthdevice,
 };
 
 bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
@@ -130,6 +131,7 @@ bool (*const keyhold_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
     keyhold_scene_on_event_filesaver,
     keyhold_scene_on_event_arbpopup,
     keyhold_scene_on_event_decryptionconfig,
+    keyhold_scene_on_event_bluetooth_setauthdevice,
 };
 
 void (*const keyhold_scene_on_exit_handlers[])(void*) = {
@@ -144,6 +146,7 @@ void (*const keyhold_scene_on_exit_handlers[])(void*) = {
     keyhold_scene_on_exit_filesaver,
     keyhold_scene_on_exit_arbpopup,
     keyhold_scene_on_exit_decryptionconfig,
+    keyhold_scene_on_exit_bluetooth_setauthdevice,
 };
 
 static const SceneManagerHandlers keyhold_scene_manager_handlers = {
