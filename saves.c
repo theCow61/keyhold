@@ -1,4 +1,5 @@
 
+#include "core/record.h"
 #include <furi.h>
 #include <storage/storage.h>
 #include <stream/file_stream.h>
@@ -7,6 +8,7 @@
 
 #define SAVES_START_MAX 15
 #define SAVES_MAX_UPDATE 6
+#define SAVES_RECORD "Keyhold"
 
 typedef struct Saves {
     const char** saved;
@@ -41,7 +43,7 @@ Saves* saves_alloc() {
     return saves;
 }
 
-void saves_free(Saves* saves) {
+void saves_free(Saves* saves) { // don't use this if SAVES_RECORD record exists our based on its implications
     FURI_LOG_D("keyhold", "am: %d", saves->amount_of_saved);
     for(size_t i = 0; i < saves->amount_of_saved; i++) {
         free((char*)saves->saved[i]);
@@ -78,4 +80,13 @@ const char* saves_get_save_at(Saves* saves, size_t idx) {
 
 size_t saves_get_number_of_saves(Saves* saves) {
     return saves->amount_of_saved;
+}
+
+void saves_load_into_ram(Saves* saves) {
+    if (furi_record_exists(SAVES_RECORD)) {
+        return;
+    }
+
+    furi_record_create(SAVES_RECORD, saves);
+    // when opening app, we need to check if this record exists, if it does, then add the saves data from record and put into saves data produced from files
 }

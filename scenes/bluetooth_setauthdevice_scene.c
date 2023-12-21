@@ -10,6 +10,7 @@
 #include <furi_hal_random.h>
 #include <bt/bt_service/bt.h>
 #include "lib/monocypher/monocypher.h"
+#include "../keyer.h"
 #include "../saves.h"
 
 void proceed_onclicked(GuiButtonType result, InputType type, void* context) {
@@ -29,6 +30,7 @@ void proceed_onclicked(GuiButtonType result, InputType type, void* context) {
 }
 
 
+uint8_t* key;
 void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     App* app = ctx;
 
@@ -42,9 +44,10 @@ void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     furi_hal_bt_serial_start();
 
     uint8_t auth_key[32];
+    key = auth_key;
     furi_hal_random_fill_buf(auth_key, 32);
     for (int i = 0; i < 32; i++) {
-        FURI_LOG_RAW_D("%X", auth_key[i]);
+        FURI_LOG_RAW_D("%02X ", auth_key[i]);
     }
     FURI_LOG_D("keyhold", "\r\n");
 
@@ -63,9 +66,10 @@ void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     FURI_LOG_D("keyhold", "R: %d", r);
 
 }
+
 bool keyhold_scene_on_event_bluetooth_setauthdevice(void* ctx, SceneManagerEvent evt) {
-    // App* app = ctx;
-    UNUSED(ctx);
+    App* app = ctx;
+    UNUSED(app);
     bool consumed = false;
 
     switch (evt.type) {
@@ -75,6 +79,12 @@ bool keyhold_scene_on_event_bluetooth_setauthdevice(void* ctx, SceneManagerEvent
                 // Bluetooth
                     // scene_manager_next_scene
                     consumed = true;
+                    // debug log reports from tag "BtSerialSvc" that "Failed updating TX charactersitic: 12", but it still works. If causes issues in future use buffer (uint8_t [32]) {0} as that doesn't seem to produce this error.
+                    uint8_t emptier[5] = { 4, 8, 0x23, 0x22, 0 }; // values after flipper app loads, so it may be concluded that the flipper's last bluetooth interaction was with flipper app and not our application.
+                    furi_hal_bt_serial_tx(emptier, 5);
+                    crypto_wipe(key, 32);
+                    
+                    ram_store_and_encrypt(app);
                     break;
                 case 1:
                 // NFC
