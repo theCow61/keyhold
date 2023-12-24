@@ -9,6 +9,7 @@ typedef enum {
     KeyholdMainMenuEventEncryptionFile,
     KeyholdMainMenuEventDecryptionFile,
     KeyholdMainMenuEventSetupPhoneAuth,
+    KeyholdMainMenuEventBluetoothAuth,
 } KeyholdMainMenuEvent;
 
 void keyhold_callback_menu(void* ctx, uint32_t idx) {
@@ -28,6 +29,9 @@ void keyhold_callback_menu(void* ctx, uint32_t idx) {
     case 5:
         scene_manager_handle_custom_event(app->scene_manager, KeyholdMainMenuEventSetupPhoneAuth);
         break;
+    case 6:
+        scene_manager_handle_custom_event(app->scene_manager, KeyholdMainMenuEventBluetoothAuth);
+        break;
     }
 }
 
@@ -43,6 +47,7 @@ void keyhold_scene_on_enter_mainmenu(void* ctx) {
     submenu_add_item(app->view_submenu, "Decrypt File", 3, keyhold_callback_menu, app);
     submenu_add_item(app->view_submenu, "Decrypt RF", 4, keyhold_callback_menu, app);
     submenu_add_item(app->view_submenu, "Setup Phone Authentication", 5, keyhold_callback_menu, app);
+    submenu_add_item(app->view_submenu, "Bluetooth Authentication", 6, keyhold_callback_menu, app);
     view_dispatcher_switch_to_view(app->vp, KeyholdViewSubmenu);
 }
 
@@ -69,6 +74,10 @@ bool keyhold_scene_on_event_mainmenu(void* ctx, SceneManagerEvent evt) {
             break;
         case KeyholdMainMenuEventSetupPhoneAuth:
             scene_manager_next_scene(app->scene_manager, KeyholdSceneBluetoothSetAuthDevice);
+            consumed = true;
+            break;
+        case KeyholdMainMenuEventBluetoothAuth:
+            scene_manager_next_scene(app->scene_manager, KeyholdSceneBluetoothAuthentication);
             consumed = true;
             break;
         default:

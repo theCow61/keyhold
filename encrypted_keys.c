@@ -31,3 +31,9 @@ void encrypted_keys_encrypt_store_recordize(Saves* saves, Storage* storage, uint
     furi_record_create("RECORDS_KEYHOLD", encrypted_keys);
 
 }
+
+void encrypted_keys_decrypt_recordize(Saves* saves, Storage* storage, uint8_t* encryptor_key) {
+    UNUSED(saves);
+    UNUSED(storage);
+    UNUSED(encryptor_key);
+}
