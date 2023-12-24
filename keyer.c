@@ -440,3 +440,44 @@ uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf) {
     ecf->encrypt_bytes = NULL;
     return ecf->plain_bytes;
 }
+
+
+void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor_key, const char* save_name, uint8_t* save_sk_key) {
+
+    // uint8_t nonce[24] = {0}; // LOOK INTO THIS TODO REMEMBER. IS SAME NONCE OK FOR SAME MESSAGE?
+    // furi_hal_random_fill_buf(nonce, 24);
+    
+    uint8_t* nonce = encryptor_key; // overlapping nonce with encryptor_key, should use first 24 bytes.
+
+    uint8_t ciphered_sk_key[32];
+
+    crypto_chacha20_x(ciphered_sk_key, save_sk_key, 32, encryptor_key, nonce, 0);
+
+    FuriString* filepath = furi_string_alloc_set(STORAGE_APP_DATA_PATH_PREFIX);
+    furi_string_cat_str(filepath, "/");
+    furi_string_cat_str(filepath, save_name);
+    furi_string_cat_str(filepath, "/x25519");
+
+    File* sk_file = storage_file_alloc(storage);
+
+    storage_file_open(sk_file, furi_string_get_cstr(filepath), FSAM_WRITE, FSOM_OPEN_ALWAYS);
+    storage_file_write(sk_file, ciphered_sk_key, 32);
+    storage_file_close(sk_file);
+    storage_file_free(sk_file);
+
+    furi_string_free(filepath);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

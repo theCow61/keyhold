@@ -64,3 +64,6 @@ uint8_t* encryptor_config_encrypted_bytes_buf_init(EncryptorConfig* ecf, size_t 
 uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf);
 
 size_t str_len(char* str);
+
+
+void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor_key, const char* save_name, uint8_t* save_sk_key);

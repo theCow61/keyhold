@@ -12,3 +12,4 @@ void saves_free(Saves* saves);
 Saves* saves_alloc_load(Storage* storage);
 const char* saves_get_save_at(Saves* saves, size_t idx);
 size_t saves_get_number_of_saves(Saves* saves);
+

@@ -1,6 +1,7 @@
 #include "bluetooth_setauthdevice_scene.h"
 #include "../keyhold.h"
 #include "core/log.h"
+#include "encrypted_keys.h"
 #include "furi_hal_random.h"
 #include "gui/modules/widget.h"
 #include "gui/modules/widget_elements/widget_element.h"
@@ -30,7 +31,7 @@ void proceed_onclicked(GuiButtonType result, InputType type, void* context) {
 }
 
 
-uint8_t* key;
+uint8_t key[32];
 void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     App* app = ctx;
 
@@ -43,11 +44,9 @@ void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     UNUSED(bt);
     furi_hal_bt_serial_start();
 
-    uint8_t auth_key[32];
-    key = auth_key;
-    furi_hal_random_fill_buf(auth_key, 32);
+    furi_hal_random_fill_buf(key, 32);
     for (int i = 0; i < 32; i++) {
-        FURI_LOG_RAW_D("%02X ", auth_key[i]);
+        FURI_LOG_RAW_D("%02X ", key[i]);
     }
     FURI_LOG_D("keyhold", "\r\n");
 
@@ -62,7 +61,7 @@ void keyhold_scene_on_enter_bluetooth_setauthdevice(void* ctx) {
     // Add NFC authenticator; store key on NFC.
 
 
-    bool r = furi_hal_bt_serial_tx(auth_key, 32); // may need to use bt_keys. recall /int/.bt.keys
+    bool r = furi_hal_bt_serial_tx(key, 32); // may need to use bt_keys. recall /int/.bt.keys
     FURI_LOG_D("keyhold", "R: %d", r);
 
 }
@@ -82,9 +81,12 @@ bool keyhold_scene_on_event_bluetooth_setauthdevice(void* ctx, SceneManagerEvent
                     // debug log reports from tag "BtSerialSvc" that "Failed updating TX charactersitic: 12", but it still works. If causes issues in future use buffer (uint8_t [32]) {0} as that doesn't seem to produce this error.
                     uint8_t emptier[5] = { 4, 8, 0x23, 0x22, 0 }; // values after flipper app loads, so it may be concluded that the flipper's last bluetooth interaction was with flipper app and not our application.
                     furi_hal_bt_serial_tx(emptier, 5);
+
+                    encrypted_keys_encrypt_store_recordize(app->saves, app->storage, key);
+
                     crypto_wipe(key, 32);
                     
-                    ram_store_and_encrypt(app);
+                    // ram_store_and_encrypt(app);
                     break;
                 case 1:
                 // NFC

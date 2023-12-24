@@ -8,7 +8,7 @@
 
 #define SAVES_START_MAX 15
 #define SAVES_MAX_UPDATE 6
-#define SAVES_RECORD "Keyhold"
+#define RECORD_SAVES "Keyhold"
 
 typedef struct Saves {
     const char** saved;
@@ -82,11 +82,14 @@ size_t saves_get_number_of_saves(Saves* saves) {
     return saves->amount_of_saved;
 }
 
-void saves_load_into_ram(Saves* saves) {
-    if (furi_record_exists(SAVES_RECORD)) {
-        return;
-    }
-
-    furi_record_create(SAVES_RECORD, saves);
-    // when opening app, we need to check if this record exists, if it does, then add the saves data from record and put into saves data produced from files
-}
+// void saves_load_into_ram(Saves* saves) {
+//     if (furi_record_exists(SAVES_RECORD)) {
+//         return;
+//     }
+//
+//
+//
+//
+//     furi_record_create(SAVES_RECORD, saves);
+//     // when opening app, we need to check if this record exists, if it does, then add the saves data from record and put into saves data produced from files
+// }

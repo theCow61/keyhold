@@ -31,7 +31,7 @@ void keyhold_scene_on_enter_encryptionmessage(void* ctx) {
 }
 bool keyhold_scene_on_event_encryptionmessage(void* ctx, SceneManagerEvent evt) {
     // take u to config variablelist screen
-    UNUSED(evt);
+    // UNUSED(evt);
     App* app = ctx;
 
     bool consumed = false;

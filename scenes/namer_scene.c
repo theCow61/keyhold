@@ -29,7 +29,7 @@ bool keyhold_scene_on_event_namer(void* ctx, SceneManagerEvent evt) {
         switch(evt.event) {
         case true:
             // scene_manager_next_scene(app->scene_manager, KeyholdSceneOk);
-            scene_manager_next_scene(app->scene_manager, KeyholdSceneLoadedIdentity);
+            scene_manager_next_scene(app->scene_manager, KeyholdSceneLoadedIdentity); //original
             consumed = true;
             break;
         case false:

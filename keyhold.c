@@ -260,6 +260,7 @@ uint8_t keyhold_app(void* p) {
 
     // keyhold_unload_save();
     app_free(app);
+    furi_record_close(RECORD_GUI);
     furi_hal_power_suppress_charge_exit();
     return 0;
 }
