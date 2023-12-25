@@ -1,4 +1,5 @@
 #include "keyer.h"
+#include "core/record.h"
 #include "lib/monocypher/monocypher.h"
 #include "storage/filesystem_api_defines.h"
 #include <furi.h>
@@ -470,6 +471,28 @@ void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor
 }
 
 
+/**
+* Checks if we have our private key in our record containing plain text private keys.
+* If we don't, then we use the normal file reading method.
+* This should not be used for Identities who we are non owned (no private key), or we don't need a private key.
+* If this is the case, then use keyer_get_pub_identity.
+* 
+* size_t idx: index associated with the name of the identity.
+*/
+Identity keyer_get_correct_identity(Storage* storage, uint8_t** encrypted_keys, const char* name, size_t idx) {
+    if (encrypted_keys == NULL) {
+        return keyer_get_identity(storage, name);
+    }
+    
+    if (encrypted_keys[idx] == NULL) {
+        return keyer_get_identity(storage, name);
+    }
+
+    Identity toReturn = keyer_get_pub_identity(storage, name);
+    toReturn.secret_key = encrypted_keys[idx];
+
+    return toReturn;
+}
 
 
 

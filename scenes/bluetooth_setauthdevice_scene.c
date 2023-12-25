@@ -82,7 +82,7 @@ bool keyhold_scene_on_event_bluetooth_setauthdevice(void* ctx, SceneManagerEvent
                     uint8_t emptier[5] = { 4, 8, 0x23, 0x22, 0 }; // values after flipper app loads, so it may be concluded that the flipper's last bluetooth interaction was with flipper app and not our application.
                     furi_hal_bt_serial_tx(emptier, 5);
 
-                    encrypted_keys_encrypt_store_recordize(app->saves, app->storage, key);
+                    encrypted_keys_encrypt_store_recordize(app, key);
 
                     crypto_wipe(key, 32);
                     

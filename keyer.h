@@ -67,3 +67,5 @@ size_t str_len(char* str);
 
 
 void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor_key, const char* save_name, uint8_t* save_sk_key);
+
+Identity keyer_get_correct_identity(Storage* storage, uint8_t** encrypted_keys, const char* name, size_t idx);

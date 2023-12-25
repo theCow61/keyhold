@@ -86,4 +86,5 @@ typedef struct App {
     DialogsApp* dialogs;
     // Export export used to represent any buffer that needs to be exported as file or nfc or watever
     SubGhzTxRxWorker* subghz_txrx;
+    uint8_t** encrypted_keys;
 } App;

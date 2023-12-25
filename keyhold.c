@@ -215,6 +215,12 @@ static App* app_alloc() {
     app->subghz_txrx = subghz_tx_rx_worker_alloc();
     subghz_devices_init();
     app->epho_anon_mode = false;
+
+    app->encrypted_keys = NULL;
+    if (furi_record_exists("RECORDS_KEYHOLD")) {
+        app->encrypted_keys = furi_record_open("RECORDS_KEYHOLD");
+    }
+
     return app;
 }
 
@@ -238,6 +244,9 @@ static void app_free(App* app) {
     variable_item_list_free(app->view_variableitemlist);
     furi_record_close(RECORD_STORAGE);
     furi_record_close(RECORD_DIALOGS);
+    if (furi_record_exists("RECORDS_KEYHOLD")) {
+        furi_record_close("RECORDS_KEYHOLD");
+    }
     // saves_free(app->saves);
     furi_string_free(app->file_browser_path);
     if(subghz_tx_rx_worker_is_running(app->subghz_txrx))

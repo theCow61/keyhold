@@ -1,7 +1,13 @@
 #include "encrypted_keys.h"
 #include "keyer.h"
+#include "keyhold.h"
+#include "lib/monocypher/monocypher.h"
 
-void encrypted_keys_encrypt_store_recordize(Saves* saves, Storage* storage, uint8_t* encryptor_key) {
+
+void encrypted_keys_encrypt_store_recordize(App* app, uint8_t* encryptor_key) {
+
+    Saves* saves = app->saves;
+    Storage* storage = app->storage;
     
     size_t nSaves = saves_get_number_of_saves(saves);
 
@@ -17,23 +23,61 @@ void encrypted_keys_encrypt_store_recordize(Saves* saves, Storage* storage, uint
         // lets hope this person doesn't have too many friends. An array of a bunch of null pointers floating in flipper at all time is not ideal. Option could be to make hashmap.
         encrypted_keys[i] = idn_at_i.secret_key;
         if (idn_at_i.secret_key == NULL) { // this save is not an owned identity then
+            encrypted_keys[i] = NULL;
             continue; // we don't want to encrypt it
         }
 
         // keyer_encrypt_sk_file
 
         keyer_encrypt_x25509_key_file_chacha20(storage, encryptor_key, save_at_i, idn_at_i.secret_key);
+
+
+        FURI_LOG_RAW_D("\r\n");
+        for (size_t j = 0; j < 32; j++) {
+            FURI_LOG_RAW_D("%02x ", encrypted_keys[i][j]);
+        }
+        FURI_LOG_RAW_D("\r\n");
     }
 
     // the same saves can be used 
     // REMEMBER: Deleting a save must also delete its record here to keep its indexing lined up. Try to find better way of doing all of this, like a hash map of owned identities.
 
     furi_record_create("RECORDS_KEYHOLD", encrypted_keys);
+    app->encrypted_keys = furi_record_open("RECORDS_KEYHOLD");
 
 }
 
-void encrypted_keys_decrypt_recordize(Saves* saves, Storage* storage, uint8_t* encryptor_key) {
-    UNUSED(saves);
-    UNUSED(storage);
-    UNUSED(encryptor_key);
+// repeating almost basically same code to save on an uneeded branc
+void encrypted_keys_decrypt_recordize(App* app, uint8_t* encryptor_key) {
+    Saves* saves = app->saves;
+    Storage* storage = app->storage;
+
+    size_t nSaves = saves_get_number_of_saves(saves);
+
+    uint8_t** encrypted_keys = malloc(nSaves * sizeof(uint8_t*));
+
+
+    for (size_t i = 0; i < nSaves; i++) {
+        const char* save_at_i = saves_get_save_at(saves, i);
+        Identity idn_at_i = keyer_get_identity(storage, save_at_i);
+        if (idn_at_i.secret_key == NULL) { // PROBLEM secret keys are null from files?
+            encrypted_keys[i] = NULL;
+            continue; // non owned identity
+        }
+
+        // nonce shall overlap with key.
+        // idn_at_i.secret_key is pulled from file that we are assuming has been ciphered
+        crypto_chacha20_x(encrypted_keys[i], idn_at_i.secret_key, 32, encryptor_key, encryptor_key, 0);
+
+        FURI_LOG_RAW_D("\r\n");
+        for (size_t j = 0; j < 32; j++) {
+            FURI_LOG_RAW_D("%02x ", encrypted_keys[i][j]);
+        }
+        FURI_LOG_RAW_D("\r\n");
+
+    }
+
+    furi_record_create("RECORDS_KEYHOLD", encrypted_keys);
+    app->encrypted_keys = furi_record_open("RECORDS_KEYHOLD");
+
 }

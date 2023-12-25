@@ -72,6 +72,7 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
     Identity from_idn;
     if(!app->epho_anon_mode) {
         from_idn = keyer_get_identity(app->storage, from_save);
+        // from_idn = keyer_get_correct_identity(app->storage, from_save, app->selector_names.name1);
     } else {
         from_idn = keyer_generate_keypair(); // generate random keypair
     }
@@ -140,6 +141,7 @@ void keyhold_scene_on_enter_encryptionconfig(void* ctx) {
     variable_item_list_set_enter_callback(
         app->view_variableitemlist, keyhold_callback_aencrypt, app);
 
+    app->epho_anon_mode = false;
     view_dispatcher_switch_to_view(app->vp, KeyholdViewVariableItemList);
 }
 bool keyhold_scene_on_event_encryptionconfig(void* ctx, SceneManagerEvent evt) {

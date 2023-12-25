@@ -52,6 +52,7 @@ void keyhold_callback_dencrypt(void* ctx, uint32_t idx) {
 
     Identity from_idn = keyer_get_pub_identity(app->storage, from_save);
     Identity to_idn = keyer_get_identity(app->storage, to_save);
+    // Identity to_idn = keyer_get_correct_identity(app->storage, to_save, app->selector_names.name2);
 
     // might have to modify for anonymous signing
     if(from_idn.public_key == NULL || to_idn.secret_key == NULL) return;

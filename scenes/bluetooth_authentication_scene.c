@@ -16,7 +16,8 @@ uint16_t bt_serial_event_callback(SerialServiceEvent evt, void* ctx) {
     
     if (evt.event == SerialServiceEventTypeDataReceived && evt.data.size == 32) {
         furi_hal_bt_serial_set_event_callback(0, NULL, NULL); // Don't want evt.data.buffer to change after this until atleast after authentication
-        encrypted_keys_encrypt_store_recordize(app->saves, app->storage, evt.data.buffer);
+        // encrypted_keys_encrypt_store_recordize(app, evt.data.buffer);
+        encrypted_keys_decrypt_recordize(app, evt.data.buffer);
         scene_manager_handle_custom_event(app->scene_manager, 0);
     }
 
