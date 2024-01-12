@@ -51,8 +51,8 @@ void keyhold_callback_dencrypt(void* ctx, uint32_t idx) {
     const char* to_save = saves_get_save_at(app->saves, app->selector_names.name2);
 
     Identity from_idn = keyer_get_pub_identity(app->storage, from_save);
-    Identity to_idn = keyer_get_identity(app->storage, to_save);
-    // Identity to_idn = keyer_get_correct_identity(app->storage, to_save, app->selector_names.name2);
+    // Identity to_idn = keyer_get_identity(app->storage, to_save);
+    Identity to_idn = keyer_get_correct_identity(app->storage, app->encrypted_keys, to_save, app->selector_names.name2);
 
     // might have to modify for anonymous signing
     if(from_idn.public_key == NULL || to_idn.secret_key == NULL) return;

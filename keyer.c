@@ -221,18 +221,24 @@ Identity keyer_get_pub_identity(Storage* storage, const char* name) {
 }
 
 Identity keyer_get_identity(Storage* storage, const char* name) {
-    FuriString* filepath = furi_string_alloc_set(STORAGE_APP_DATA_PATH_PREFIX);
-    furi_string_cat_str(filepath, "/");
+    // FuriString* filepath = furi_string_alloc_set(STORAGE_APP_DATA_PATH_PREFIX);
+    FuriString* filepath = furi_string_alloc_set("/any/apps_data/keyhold/"); // bizare. the /data path only sometimes works. Fix this as this path may be obsoluted.
+    // furi_string_cat_str(filepath, "/");
     furi_string_cat_str(filepath, name);
     furi_string_cat_str(filepath, "/x25519");
+    FURI_LOG_D("keyhold", "%s", furi_string_get_cstr(filepath));
 
     Identity idn = keyer_identity_init(NULL, NULL);
 
+    FURI_LOG_D("keyhold", "bruh0");
     if(storage_file_exists(storage, furi_string_get_cstr(filepath))) { // sec key
+        FURI_LOG_D("keyhold", "bruh1");
         File* sk_file = storage_file_alloc(storage);
         if(storage_file_open(
                sk_file, furi_string_get_cstr(filepath), FSAM_READ, FSOM_OPEN_EXISTING)) {
             uint8_t* sk_buf = malloc(32 * sizeof(uint8_t));
+
+            FURI_LOG_D("keyhold", "bruh2");
 
             if(!storage_file_read(sk_file, sk_buf, 32)) {
                 free(sk_buf);
@@ -245,6 +251,7 @@ Identity keyer_get_identity(Storage* storage, const char* name) {
         }
         storage_file_free(sk_file);
     }
+
 
     furi_string_cat_str(filepath, "_pub");
 
@@ -312,8 +319,8 @@ void encryptor_config_reset(EncryptorConfig* ecf) {
     }
     ecf->plain_bytes = NULL;
     ecf->encrypt_bytes = NULL;
-    keyer_identity_clear(&ecf->encrypt_as);
-    keyer_identity_clear(&ecf->encrypt_for);
+    // keyer_identity_clear(&ecf->encrypt_as);
+    // keyer_identity_clear(&ecf->encrypt_for);
     ecf->size = 0;
 }
 
@@ -380,8 +387,8 @@ uint8_t* encryptor_config_encrypt(EncryptorConfig* ecf) {
     crypto_wipe(shared_secret, 32);
     crypto_wipe(shared_key, 32);
 
-    keyer_identity_clear(&ecf->encrypt_as);
-    keyer_identity_clear(&ecf->encrypt_for);
+    // keyer_identity_clear(&ecf->encrypt_as);
+    // keyer_identity_clear(&ecf->encrypt_for);
 
     return ecf->encrypt_bytes;
 }
@@ -435,8 +442,8 @@ uint8_t* encryptor_config_decrypt(EncryptorConfig* ecf) {
 
     crypto_wipe(shared_secret, 32);
     crypto_wipe(shared_key, 32);
-    keyer_identity_clear(&ecf->encrypt_for);
-    keyer_identity_clear(&ecf->encrypt_as);
+    // keyer_identity_clear(&ecf->encrypt_for); // this could be a pointer to encrypted keys.
+    // keyer_identity_clear(&ecf->encrypt_as);
     free(ecf->encrypt_bytes);
     ecf->encrypt_bytes = NULL;
     return ecf->plain_bytes;
@@ -454,8 +461,8 @@ void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor
 
     crypto_chacha20_x(ciphered_sk_key, save_sk_key, 32, encryptor_key, nonce, 0);
 
-    FuriString* filepath = furi_string_alloc_set(STORAGE_APP_DATA_PATH_PREFIX);
-    furi_string_cat_str(filepath, "/");
+    FuriString* filepath = furi_string_alloc_set("/any/apps_data/keyhold/");
+    // furi_string_cat_str(filepath, "/");
     furi_string_cat_str(filepath, save_name);
     furi_string_cat_str(filepath, "/x25519");
 
@@ -480,14 +487,10 @@ void keyer_encrypt_x25509_key_file_chacha20(Storage* storage, uint8_t* encryptor
 * size_t idx: index associated with the name of the identity.
 */
 Identity keyer_get_correct_identity(Storage* storage, uint8_t** encrypted_keys, const char* name, size_t idx) {
-    if (encrypted_keys == NULL) {
+    if (encrypted_keys == NULL || encrypted_keys[idx] == NULL) {
         return keyer_get_identity(storage, name);
     }
     
-    if (encrypted_keys[idx] == NULL) {
-        return keyer_get_identity(storage, name);
-    }
-
     Identity toReturn = keyer_get_pub_identity(storage, name);
     toReturn.secret_key = encrypted_keys[idx];
 

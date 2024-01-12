@@ -9,6 +9,7 @@
 #include <bt/bt_service/bt.h>
 #include <furi_hal_bt.h>
 #include <furi_hal_bt_serial.h>
+#include <storage/storage.h>
 
 
 uint16_t bt_serial_event_callback(SerialServiceEvent evt, void* ctx) {

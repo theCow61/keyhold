@@ -71,8 +71,8 @@ void keyhold_callback_aencrypt(void* ctx, uint32_t idx) {
 
     Identity from_idn;
     if(!app->epho_anon_mode) {
-        from_idn = keyer_get_identity(app->storage, from_save);
-        // from_idn = keyer_get_correct_identity(app->storage, from_save, app->selector_names.name1);
+        // from_idn = keyer_get_identity(app->storage, from_save);
+        from_idn = keyer_get_correct_identity(app->storage, app->encrypted_keys, from_save, app->selector_names.name1);
     } else {
         from_idn = keyer_generate_keypair(); // generate random keypair
     }

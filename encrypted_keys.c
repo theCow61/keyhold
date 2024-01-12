@@ -1,8 +1,17 @@
 #include "encrypted_keys.h"
 #include "keyer.h"
 #include "keyhold.h"
+#include "storage/filesystem_api_defines.h"
+#include <storage/storage.h>
 #include "lib/monocypher/monocypher.h"
 
+void hex_printer(uint8_t* byte_buf, size_t size) {
+        FURI_LOG_RAW_D("\r\n");
+        for (size_t i = 0; i < size; i++) {
+            FURI_LOG_RAW_D("%02x ", byte_buf[i]);
+        }
+        FURI_LOG_RAW_D("\r\n");
+}
 
 void encrypted_keys_encrypt_store_recordize(App* app, uint8_t* encryptor_key) {
 
@@ -31,12 +40,6 @@ void encrypted_keys_encrypt_store_recordize(App* app, uint8_t* encryptor_key) {
 
         keyer_encrypt_x25509_key_file_chacha20(storage, encryptor_key, save_at_i, idn_at_i.secret_key);
 
-
-        FURI_LOG_RAW_D("\r\n");
-        for (size_t j = 0; j < 32; j++) {
-            FURI_LOG_RAW_D("%02x ", encrypted_keys[i][j]);
-        }
-        FURI_LOG_RAW_D("\r\n");
     }
 
     // the same saves can be used 
@@ -59,21 +62,23 @@ void encrypted_keys_decrypt_recordize(App* app, uint8_t* encryptor_key) {
 
     for (size_t i = 0; i < nSaves; i++) {
         const char* save_at_i = saves_get_save_at(saves, i);
+        FURI_LOG_D("keyhold", "%s", save_at_i);
         Identity idn_at_i = keyer_get_identity(storage, save_at_i);
+        free(idn_at_i.public_key); // make function that only pulls private key because we dont need public key here; wasting file read
         if (idn_at_i.secret_key == NULL) { // PROBLEM secret keys are null from files?
             encrypted_keys[i] = NULL;
-            continue; // non owned identity
+            continue; // non owned identity or file read failed
         }
+
+        encrypted_keys[i] = idn_at_i.secret_key;
+        hex_printer(encrypted_keys[i], 32);
+
 
         // nonce shall overlap with key.
         // idn_at_i.secret_key is pulled from file that we are assuming has been ciphered
-        crypto_chacha20_x(encrypted_keys[i], idn_at_i.secret_key, 32, encryptor_key, encryptor_key, 0);
+        // inplace encryption
+        crypto_chacha20_x(encrypted_keys[i], encrypted_keys[i], 32, encryptor_key, encryptor_key, 0);
 
-        FURI_LOG_RAW_D("\r\n");
-        for (size_t j = 0; j < 32; j++) {
-            FURI_LOG_RAW_D("%02x ", encrypted_keys[i][j]);
-        }
-        FURI_LOG_RAW_D("\r\n");
 
     }
 
@@ -81,3 +86,5 @@ void encrypted_keys_decrypt_recordize(App* app, uint8_t* encryptor_key) {
     app->encrypted_keys = furi_record_open("RECORDS_KEYHOLD");
 
 }
+
+
