@@ -1,7 +1,7 @@
 # keyhold
 Flipper Zero application allowing for key exchange between devices over multiple protocols and encryption/decryption.
 
-Live example and further commentary can be found [here](https://salti.tech/posts/keyhold).
+Live examples and further commentary can be found [here](https://salti.tech/posts/keyhold).
 
 Keyhold is a cryptographic key manager+ on your flipper zero device. You may generate keys and encrypt messages for other people using asymmetric encryption with x25519. Encrypted messages can be sent over the
 sub ghz device on the flipper zero. Messages may also be decrypted.
