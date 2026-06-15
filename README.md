@@ -1,5 +1,5 @@
 # keyhold
-Flipper Zero application allowing for key exchange between devices over multiple protocols and encryption/decryption.
+
 
 Live examples and further commentary can be found [here](https://salti.tech/posts/keyhold).
 
